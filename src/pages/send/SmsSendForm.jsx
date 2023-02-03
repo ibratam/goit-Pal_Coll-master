@@ -47,8 +47,9 @@ const SmsSendForm = () => {
     const options = data.map((d) => ({
       value: d.get("sms"),
       label: d.get("title"),
+      target:d.get('target')
     }));
-    setValueOption(options);
+    setValueOption(options.filter((item) => item.target !== user.email));
   }, []);
 
   return (

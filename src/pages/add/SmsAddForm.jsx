@@ -1,13 +1,28 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp ,getDocs,orderBy} from "firebase/firestore";
 import { db } from "../../firebase";
-import { Button, Card, Grid, TextField } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import { Formik } from 'formik';
 import { addSmsSchema } from "../validation/Validation";
+import { useState } from "react";
+import {
+  Button,
+  Card,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import { useEffect } from "react";
+
+
 const SmsAddForm = () => {
   const user = JSON.parse(localStorage.getItem('user'));
+  const [targetUser,setTargetUser]=useState() 
+  const [users,setUsers]=useState([]) ;
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -15,6 +30,21 @@ const SmsAddForm = () => {
     textAlign: 'center',
     color: theme.palette.text.secondary,
   }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(async () => {
+    const querySnapshot = await getDocs(
+      collection(db, "users"),
+      orderBy("createdAt")
+    );
+    const data = querySnapshot.docs;
+    const options = data.map((d) => ({
+      value: d.get("email"),
+      label: d.get("username"),
+    }));
+    setUsers(options);
+  }, []);
+
+  
   return (
 
     <Formik
@@ -25,7 +55,8 @@ const SmsAddForm = () => {
           email: user.email,
           title: values.smsTitle,
           sms: values.sms,
-          createdAt: serverTimestamp()
+          createdAt: serverTimestamp(),
+          target:targetUser
         });
         setSubmitting(true);
         values.smsTitle = '';
@@ -43,10 +74,32 @@ const SmsAddForm = () => {
         isSubmitting,
       }) => (
         <form onSubmit={handleSubmit} style={{ padding: "18px" }}>
+          
           <Card padding={3} elevation={3} >
             <Grid container spacing={2} padding={3}>
+            
               <Grid item xs={12} >
                 <Item style={{ backgroundColor: "#A5A3A3", color: "white", fontWeight: 'bold', fontSize: '25px' }}><label>Add SMS Content</label></Item>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl required fullWidth>
+                  <InputLabel id="demo-simple-select-required-label">
+                    username
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-required-label"
+                    id="demo-simple-select-required"
+                    value={targetUser}
+                    label="username*"
+                    onChange={(event) => setTargetUser(event.target.value)}
+                    
+                  >
+                    {
+                    users.map((value) => (
+                      <MenuItem value={value.value}>{value.label}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <TextField error={errors.smsTitle && touched.smsTitle} multiline maxRows={10} fullWidth
