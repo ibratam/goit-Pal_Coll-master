@@ -49,7 +49,7 @@ const SmsSendForm = () => {
       label: d.get("title"),
       target:d.get('target')
     }));
-    setValueOption(options.filter((item) => item.target !== user.email));
+    setValueOption(options.filter((item) => item.target == user.email));
   }, []);
 
   return (

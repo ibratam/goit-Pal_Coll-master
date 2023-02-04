@@ -90,7 +90,7 @@ const SmsAddForm = () => {
                     labelId="demo-simple-select-required-label"
                     id="demo-simple-select-required"
                     value={targetUser}
-                    label="username*"
+                    label="username"
                     onChange={(event) => setTargetUser(event.target.value)}
                     
                   >
