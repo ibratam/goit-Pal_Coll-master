@@ -39,7 +39,7 @@ export const smsColumns = [
   },
   { field: "title", headerName: "SMS Title", width: 100 },
   { field: "sms", headerName: "SMS Message", width: 400 },
-  { field: "email", headerName: "Added User", width: 250 },
+  { field: "target", headerName: "Target User", width: 250 },
   
 
 ];
