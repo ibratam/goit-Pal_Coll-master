@@ -11,11 +11,9 @@ import { db } from "../../firebase";
 
 
 const SendDatatable = () => {
-  const [data, setData] = useState([]);
-  const [filterValue, setFilterValue] = useState('');
-  const handleFilterChange = (event) => {
-    setFilterValue(event.target.value);
-  };
+  const [data, setData] = useState([]); 
+  const user = JSON.parse(localStorage.getItem("user"));
+
   useEffect(() => {
     // LISTEN (REALTIME)
     const sub = onSnapshot(
@@ -24,7 +22,8 @@ const SendDatatable = () => {
         let list = snapShot.docs.map(doc=>{
           return {...doc.data(),id: doc.id}
         })
-        setData(list);
+
+        user.email != 'admin@palcoll.ps'? setData(list.filter((item) => item.sender === user.email)):setData(list);
       },
       (error) => {
         console.log('error');
