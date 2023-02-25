@@ -1,16 +1,21 @@
 import "./datatable.scss";
-import { DataGrid } from "@mui/x-data-grid";
-import { smsMessageColumns, userColumns } from "../../datatablesource";
+import { DataGrid, GridToolbar} from '@mui/x-data-grid';
+import { smsMessageColumns } from "../../datatablesource";
 import { useEffect, useState } from "react";
 import {
   collection,
-  onSnapshot,orderBy
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
+
+
 const SendDatatable = () => {
   const [data, setData] = useState([]);
-
+  const [filterValue, setFilterValue] = useState('');
+  const handleFilterChange = (event) => {
+    setFilterValue(event.target.value);
+  };
   useEffect(() => {
     // LISTEN (REALTIME)
     const sub = onSnapshot(
@@ -37,8 +42,13 @@ const SendDatatable = () => {
         className="datagrid"
         rows={data}
         columns={smsMessageColumns}
-        pageSize={100}
+        pageSize={99}
         rowsPerPageOptions={[9]}
+        components={{
+          Toolbar: GridToolbar,
+        }}
+        
+        
         sortingOrder = {['asc', 'desc', null]}
         initialState={{
           sorting: {
